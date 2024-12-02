@@ -1,0 +1,4 @@
+destination: dist
+source: src
+keep_files: 
+  - webpack
