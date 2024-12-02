@@ -175,10 +175,6 @@ const mods = computed(() => {
       <div class="silkscreen-regular notes">
         {{ state.notes }}
       </div>
-      <!--
-        volume!
-        octave slider? 3 notches from center for 7 total?
-      -->
     </div>
     <div class="bottom-section">
       <div class="buttons">

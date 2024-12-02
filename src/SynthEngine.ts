@@ -17,10 +17,11 @@ export class SynthEngine {
   mod4On = false;
   notes: Note[] = [];
   octave = 3;
+  startingVolume = -6;
 
   setupSynth() {
     this.synth = new Tone.PolySynth(Tone.MonoSynth, {
-      volume: -12,
+      volume: this.startingVolume,
       oscillator: {
         type: "square8",
       },
@@ -45,6 +46,10 @@ export class SynthEngine {
     this.synth!.triggerAttack(NoteToString(note));
   }
 
+  private getVolume(): number {
+    return this.startingVolume - 1 * (this.notes.length - 1);
+  }
+
   play() {
     if (!this.synth) this.setupSynth();
     this.release();
@@ -58,7 +63,7 @@ export class SynthEngine {
     if (this.mod4On) this.notes.push(this.mod4.getNote(this.root!));
 
     console.log(this.notes.map(NoteToString).join(" "));
-    this.synth!.volume.value = -12 - 1 * (this.notes.length - 1);
+    this.synth!.volume.value = this.getVolume();
     this.notes.forEach((n) => this.playNote(n));
   }
 
@@ -127,6 +132,6 @@ export class SynthEngine {
   }
 
   getNotes(): string {
-    return this.notes.map(NoteToString).join(" ");
+    return this.notes.map((n) => n.name).join(" ");
   }
 }
