@@ -93,9 +93,12 @@ function getNote(num: number) {
 </template>
 <style scoped>
 .keyboard-container {
-  min-width: 400px;
-  min-height: 400px;
+  min-width: 405px;
+  max-width: 405px;
   display: inline-flex;
+}
+.black-key {
+  top: -26px;
 }
 .key1 {
   position: relative;

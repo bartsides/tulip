@@ -136,57 +136,66 @@ window.addEventListener("keyup", (e) => {
 
 <template>
   <div class="tulip">
-    <div class="buttons">
-      <div class="chord-buttons">
-        <ChordCard
-          v-for="i in [0, 1, 2, 3]"
-          :on="state.chord?.name === Chords[i].name"
-          :chord="Chords[i]"
-          @click.native="toggleChord(Chords[i])"
-        />
-      </div>
-      <div class="mod-buttons">
-        <ModCard
-          :on="state.mod1On"
-          :mod="state.mod1"
-          @click.native="toggleMod(0)"
-        />
-        <ModCard
-          :on="state.mod2On"
-          :mod="state.mod2"
-          @click.native="toggleMod(1)"
-        />
-        <ModCard
-          :on="state.mod3On"
-          :mod="state.mod3"
-          @click.native="toggleMod(2)"
-        />
-        <ModCard
-          :on="state.mod4On"
-          :mod="state.mod4"
-          @click.native="toggleMod(3)"
-        />
-      </div>
+    <div class="top-section">
+      <!--
+        volume
+        octave slider? 3 notches from center for 7 total?
+      -->
     </div>
-    <div class="keys">
-      <Keyboard
-        :root="state.root"
-        :octave="state.octave"
-        :keyboard-keys="keyboardKeys"
-      />
+    <div class="bottom-section">
+      <div class="buttons">
+        <div class="chord-buttons">
+          <ChordCard
+            v-for="i in [0, 1, 2, 3]"
+            :on="state.chord?.name === Chords[i].name"
+            :chord="Chords[i]"
+            @click.native="toggleChord(Chords[i])"
+          />
+        </div>
+        <div class="mod-buttons">
+          <ModCard
+            :on="state.mod1On"
+            :mod="state.mod1"
+            @click.native="toggleMod(0)"
+          />
+          <ModCard
+            :on="state.mod2On"
+            :mod="state.mod2"
+            @click.native="toggleMod(1)"
+          />
+          <ModCard
+            :on="state.mod3On"
+            :mod="state.mod3"
+            @click.native="toggleMod(2)"
+          />
+          <ModCard
+            :on="state.mod4On"
+            :mod="state.mod4"
+            @click.native="toggleMod(3)"
+          />
+        </div>
+      </div>
+      <div class="keys">
+        <Keyboard
+          :root="state.root"
+          :octave="state.octave"
+          :keyboard-keys="keyboardKeys"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
 .tulip {
-  display: inline-flex;
-  gap: 50px;
+  min-width: 900px;
 }
 .buttons {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-left: 50px;
+  margin-top: 25px;
 }
 .chord-buttons,
 .mod-buttons {
@@ -195,5 +204,21 @@ window.addEventListener("keyup", (e) => {
 }
 .keys {
   width: 100%;
+  margin-left: 40px;
+}
+.top-section {
+  min-width: 900px;
+  min-height: 120px;
+  border: 1px solid white;
+  border-bottom: 0;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+}
+.bottom-section {
+  display: inline-flex;
+  min-width: 900px;
+  border: 1px solid white;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
 }
 </style>

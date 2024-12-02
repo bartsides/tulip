@@ -11,13 +11,14 @@ defineProps<{ note: Note; pressed: boolean; bindingKey: string }>();
 <style scoped>
 .black-key {
   border: 1px solid white;
-  width: 32px;
-  height: 170px;
+  min-width: 32px;
+  height: 142px;
   background: black;
   z-index: 2;
   display: flex;
   align-items: end;
   justify-items: center;
+  padding-bottom: 5px;
 }
 .black-key-pressed {
   background: rgb(54, 54, 54);
