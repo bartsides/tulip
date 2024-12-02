@@ -6,9 +6,11 @@ export interface Note {
 }
 
 export function AddNote(note: Note, mod: number): Note {
-  // TODO: Handle going over and under bounds of array
-  const res = Notes[(note.value - 1 + mod) % 12];
+  // Only handles positive mod
+  const val = note.value - 1 + mod;
+  const res = Notes[val % 12];
   res.octave = note.octave;
+  if (res.octave && val > 11) res.octave++;
   //console.log(res.name, res.octave);
   return res;
 }

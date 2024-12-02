@@ -57,7 +57,7 @@ export class SynthEngine {
     if (this.mod3On) this.notes.push(this.mod3.getNote(this.root!));
     if (this.mod4On) this.notes.push(this.mod4.getNote(this.root!));
 
-    console.log(`triggering ${this.notes.map(NoteToString).join(" ")}`);
+    console.log(this.notes.map(NoteToString).join(" "));
     this.synth!.volume.value = -12 - 1 * (this.notes.length - 1);
     this.notes.forEach((n) => this.playNote(n));
   }
@@ -70,9 +70,9 @@ export class SynthEngine {
   }
 
   changeRootNote(note: Note | null): Note | null {
-    if (note) note.octave = this.octave;
+    if (note && !note.octave) note.octave = this.octave;
     if (Equals(this.root, note)) return this.root;
-    this.root = note;
+    this.root = JSON.parse(JSON.stringify(note));
     this.play();
     return this.root;
   }
@@ -93,7 +93,6 @@ export class SynthEngine {
   }
 
   addMod(num: number) {
-    console.log("addMod", num);
     if (num === 0 && !this.mod1On) {
       this.mod1On = true;
       this.play();

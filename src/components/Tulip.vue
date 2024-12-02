@@ -3,13 +3,27 @@ import { reactive } from "vue";
 import { SynthEngine } from "../SynthEngine";
 import Chords, { Chord } from "../theory/Chords";
 import Mods, { Mod } from "../theory/Mods";
-import Notes, { Equals, Note } from "../theory/Notes";
+import Notes, { AddNote, Note } from "../theory/Notes";
 import ChordCard from "./ChordCard.vue";
+import Keyboard from "./Keyboard.vue";
 import ModCard from "./ModCard.vue";
 
 const chordKeys = ["a", "s", "d", "f"];
 const modKeys = ["z", "x", "c", "v"];
-const keyboardKeys = ["j", "k", "l", ";"];
+const keyboardKeys = [
+  "g",
+  "y",
+  "h",
+  "u",
+  "j",
+  "k",
+  "o",
+  "l",
+  "p",
+  ";",
+  "[",
+  "'",
+];
 const synthEngine = new SynthEngine();
 
 const state = reactive<{
@@ -39,11 +53,9 @@ const state = reactive<{
 });
 
 function getNoteForKey(key: string): Note {
-  if (key === keyboardKeys[0]) return Notes[3]; // C
-  if (key === keyboardKeys[1]) return Notes[4];
-  if (key === keyboardKeys[2]) return Notes[5];
-  if (key === keyboardKeys[3]) return Notes[6];
-  throw new Error(`Couldn't get note for key '${key}''`);
+  let baseNote = Notes[3];
+  baseNote.octave = state.octave;
+  return AddNote(baseNote, keyboardKeys.indexOf(key));
 }
 
 function getChordForKey(key: string): Chord {
@@ -96,7 +108,6 @@ function toggleMod(num: number) {
     else addMod(num);
   }
 }
-
 window.addEventListener("keydown", (e) => {
   if (keyboardKeys.includes(e.key))
     state.root = synthEngine.changeRootNote(getNoteForKey(e.key));
@@ -110,7 +121,7 @@ window.addEventListener("keydown", (e) => {
 });
 window.addEventListener("keyup", (e) => {
   if (keyboardKeys.includes(e.key)) {
-    if (Equals(state.root, getNoteForKey(e.key))) {
+    if (state.root?.name == getNoteForKey(e.key).name) {
       state.root = synthEngine.changeRootNote(null);
     }
   } else if (chordKeys.includes(e.key)) {
@@ -124,42 +135,54 @@ window.addEventListener("keyup", (e) => {
 </script>
 
 <template>
-  <div class="buttons">
-    <div class="chord-buttons">
-      <ChordCard
-        v-for="i in [0, 1, 2, 3]"
-        :on="state.chord?.name === Chords[i].name"
-        :chord="Chords[i]"
-        @click.native="toggleChord(Chords[i])"
-      />
+  <div class="tulip">
+    <div class="buttons">
+      <div class="chord-buttons">
+        <ChordCard
+          v-for="i in [0, 1, 2, 3]"
+          :on="state.chord?.name === Chords[i].name"
+          :chord="Chords[i]"
+          @click.native="toggleChord(Chords[i])"
+        />
+      </div>
+      <div class="mod-buttons">
+        <ModCard
+          :on="state.mod1On"
+          :mod="state.mod1"
+          @click.native="toggleMod(0)"
+        />
+        <ModCard
+          :on="state.mod2On"
+          :mod="state.mod2"
+          @click.native="toggleMod(1)"
+        />
+        <ModCard
+          :on="state.mod3On"
+          :mod="state.mod3"
+          @click.native="toggleMod(2)"
+        />
+        <ModCard
+          :on="state.mod4On"
+          :mod="state.mod4"
+          @click.native="toggleMod(3)"
+        />
+      </div>
     </div>
-    <div class="mod-buttons">
-      <ModCard
-        :on="state.mod1On"
-        :mod="state.mod1"
-        @click.native="toggleMod(0)"
-      />
-      <ModCard
-        :on="state.mod2On"
-        :mod="state.mod2"
-        @click.native="toggleMod(1)"
-      />
-      <ModCard
-        :on="state.mod3On"
-        :mod="state.mod3"
-        @click.native="toggleMod(2)"
-      />
-      <ModCard
-        :on="state.mod4On"
-        :mod="state.mod4"
-        @click.native="toggleMod(3)"
+    <div class="keys">
+      <Keyboard
+        :root="state.root"
+        :octave="state.octave"
+        :keyboard-keys="keyboardKeys"
       />
     </div>
   </div>
-  <div class="keys"></div>
 </template>
 
 <style scoped>
+.tulip {
+  display: inline-flex;
+  gap: 50px;
+}
 .buttons {
   display: flex;
   flex-direction: column;
@@ -169,5 +192,8 @@ window.addEventListener("keyup", (e) => {
 .mod-buttons {
   display: inline-flex;
   gap: 4px;
+}
+.keys {
+  width: 100%;
 }
 </style>
