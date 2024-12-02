@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 function getNote(num: number) {
-  const baseNote = Notes[3]; // C
+  const baseNote = Notes[0];
   baseNote.octave = props.octave;
   return AddNote(baseNote, num);
 }

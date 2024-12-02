@@ -63,9 +63,7 @@ export class SynthEngine {
   }
 
   release() {
-    this.notes.forEach((note: Note) => {
-      this.synth?.triggerRelease(NoteToString(note));
-    });
+    this.synth?.releaseAll();
     this.notes = [];
   }
 

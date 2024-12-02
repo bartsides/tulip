@@ -53,7 +53,7 @@ const state = reactive<{
 });
 
 function getNoteForKey(key: string): Note {
-  let baseNote = Notes[3];
+  let baseNote = Notes[0];
   baseNote.octave = state.octave;
   return AddNote(baseNote, keyboardKeys.indexOf(key));
 }
