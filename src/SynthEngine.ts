@@ -1,7 +1,7 @@
 import * as Tone from "tone";
 import { Chord } from "./theory/Chords";
 import Mods, { Mod } from "./theory/Mods";
-import { Equals, Note, NoteToString } from "./theory/notes";
+import { Equals, Note, NoteToString } from "./theory/Notes";
 
 export class SynthEngine {
   synth: Tone.PolySynth | null = null;

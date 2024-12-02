@@ -1,4 +1,4 @@
-import { AddNote, Note } from "./notes";
+import { AddNote, Note } from "./Notes";
 
 export interface Chord {
   name: string;

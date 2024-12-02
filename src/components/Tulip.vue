@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import { SynthEngine } from "../SynthEngine";
 import Chords, { Chord } from "../theory/Chords";
 import Mods, { Mod } from "../theory/Mods";
-import Notes, { Equals, Note } from "../theory/notes";
+import Notes, { Equals, Note } from "../theory/Notes";
 import ChordCard from "./ChordCard.vue";
 import ModCard from "./ModCard.vue";
 
