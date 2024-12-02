@@ -4,17 +4,28 @@ import { Mod } from "../theory/Mods";
 defineProps<{
   mod: Mod;
   on: boolean;
+  keyBinding: string;
 }>();
 </script>
 <template>
-  <div class="mod-card unselectable" :class="[on ? 'mod-on' : 'mod-off']">
-    <div class="mod-card-circle">
-      {{ mod.name }}
+  <div class="mod-card">
+    <div
+      class="mod-card-button unselectable"
+      :class="[on ? 'mod-on' : 'mod-off']"
+    >
+      <div class="mod-card-circle">
+        {{ keyBinding.toUpperCase() }}
+      </div>
     </div>
+    {{ mod.name }}
   </div>
 </template>
 <style scoped>
 .mod-card {
+  width: 80px;
+  height: 106px;
+}
+.mod-card-button {
   border: 1px solid white;
   border-radius: 1rem;
   width: 80px;

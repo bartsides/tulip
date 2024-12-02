@@ -98,7 +98,7 @@ function getNote(num: number) {
   display: inline-flex;
 }
 .black-key {
-  top: -26px;
+  top: -22px;
 }
 .key1 {
   position: relative;
@@ -114,7 +114,7 @@ function getNote(num: number) {
 }
 .key4 {
   position: relative;
-  left: -44px;
+  left: -46px;
 }
 .key5 {
   position: relative;

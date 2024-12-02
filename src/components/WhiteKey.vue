@@ -11,9 +11,10 @@ defineProps<{ note: Note; pressed: boolean; bindingKey: string }>();
 <style scoped>
 .white-key {
   border: 1px solid white;
+  border-radius: 4px;
   min-width: 52px;
   max-width: 52px;
-  height: 214px;
+  height: 254px;
   background: grey;
   display: flex;
   align-items: end;

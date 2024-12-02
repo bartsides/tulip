@@ -11,8 +11,9 @@ defineProps<{ note: Note; pressed: boolean; bindingKey: string }>();
 <style scoped>
 .black-key {
   border: 1px solid white;
+  border-radius: 4px;
   min-width: 32px;
-  height: 142px;
+  height: 172px;
   background: black;
   z-index: 2;
   display: flex;

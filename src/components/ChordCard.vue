@@ -4,17 +4,28 @@ import { Chord } from "../theory/Chords";
 defineProps<{
   chord: Chord;
   on: boolean;
+  keyBinding: string;
 }>();
 </script>
 <template>
-  <div class="chord-card unselectable" :class="[on ? 'chord-on' : 'chord-off']">
-    <div class="chord-card-circle">
-      {{ chord.name }}
+  <div class="chord-card">
+    {{ chord.name }}
+    <div
+      class="chord-card-button unselectable"
+      :class="[on ? 'chord-on' : 'chord-off']"
+    >
+      <div class="chord-card-circle">
+        {{ keyBinding.toUpperCase() }}
+      </div>
     </div>
   </div>
 </template>
 <style scoped>
 .chord-card {
+  width: 80px;
+  height: 106px;
+}
+.chord-card-button {
   border: 1px solid white;
   border-radius: 1rem;
   width: 80px;

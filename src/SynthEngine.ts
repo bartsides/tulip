@@ -125,4 +125,8 @@ export class SynthEngine {
   changeOctave(value: number) {
     this.octave = value;
   }
+
+  getNotes(): string {
+    return this.notes.map(NoteToString).join(" ");
+  }
 }

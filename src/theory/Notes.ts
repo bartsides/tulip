@@ -6,12 +6,19 @@ export interface Note {
 }
 
 export function AddNote(note: Note, mod: number): Note {
-  // Only handles positive mod
-  const val = note.value - 1 + mod;
+  let val = note.value - 1 + mod;
   const res = Notes[val % 12];
   res.octave = note.octave;
-  if (res.octave && val > 11) res.octave++;
-  //console.log(res.name, res.octave);
+  if (res.octave) {
+    while (val < 0) {
+      res.octave--;
+      val += 12;
+    }
+    while (val > 11) {
+      res.octave++;
+      val -= 12;
+    }
+  }
   return res;
 }
 

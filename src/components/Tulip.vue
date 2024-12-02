@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { computed, onBeforeUnmount, onMounted, reactive } from "vue";
 import { SynthEngine } from "../SynthEngine";
 import Chords, { Chord } from "../theory/Chords";
 import Mods, { Mod } from "../theory/Mods";
@@ -38,6 +38,7 @@ const state = reactive<{
   mod2On: boolean;
   mod3On: boolean;
   mod4On: boolean;
+  notes: string;
 }>({
   root: null,
   chord: null,
@@ -50,6 +51,7 @@ const state = reactive<{
   mod2On: false,
   mod3On: false,
   mod4On: false,
+  notes: "",
 });
 
 function getNoteForKey(key: string): Note {
@@ -59,14 +61,11 @@ function getNoteForKey(key: string): Note {
 }
 
 function getChordForKey(key: string): Chord {
-  for (let i = 0; i < chordKeys.length; i++)
-    if (key === chordKeys[i]) return Chords[i];
-  throw new Error(`Couldn't get chord for key '${key}''`);
+  return Chords[chordKeys.indexOf(key)];
 }
 
 function getModForKey(key: string): number {
-  for (let i = 0; i < modKeys.length; i++) if (key === modKeys[i]) return i;
-  throw new Error(`Couldn't get mod for key '${key}''`);
+  return modKeys.indexOf(key);
 }
 
 function changeChord(chord: Chord | null) {
@@ -108,7 +107,8 @@ function toggleMod(num: number) {
     else addMod(num);
   }
 }
-window.addEventListener("keydown", (e) => {
+
+function keydown(e: KeyboardEvent) {
   if (keyboardKeys.includes(e.key))
     state.root = synthEngine.changeRootNote(getNoteForKey(e.key));
   else if (chordKeys.includes(e.key))
@@ -118,8 +118,10 @@ window.addEventListener("keydown", (e) => {
   } else if (e.key === " ") {
     synthEngine.release();
   }
-});
-window.addEventListener("keyup", (e) => {
+  state.notes = synthEngine.getNotes();
+}
+
+function keyup(e: KeyboardEvent) {
   if (keyboardKeys.includes(e.key)) {
     if (state.root?.name == getNoteForKey(e.key).name) {
       state.root = synthEngine.changeRootNote(null);
@@ -131,14 +133,50 @@ window.addEventListener("keyup", (e) => {
   } else if (modKeys.includes(e.key)) {
     removeMod(getModForKey(e.key));
   }
+  state.notes = synthEngine.getNotes();
+}
+
+onMounted(() => {
+  window.removeEventListener("keydown", keydown);
+  window.removeEventListener("keyup", keyup);
+  window.addEventListener("keydown", keydown);
+  window.addEventListener("keyup", keyup);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", keydown);
+  window.removeEventListener("keyup", keyup);
+});
+const mods = computed(() => {
+  return [
+    { on: state.mod1On, mod: state.mod1 },
+    { on: state.mod2On, mod: state.mod2 },
+    { on: state.mod3On, mod: state.mod3 },
+    { on: state.mod4On, mod: state.mod4 },
+  ];
 });
 </script>
 
 <template>
   <div class="tulip">
     <div class="top-section">
+      <div class="ridges">
+        <div v-for=" in [0, 1, 2, 3, 4, 5, 6, 7, 8]" class="ridge">
+          <div class="inner-ridge"></div>
+        </div>
+      </div>
+      <div class="ridges">
+        <div v-for=" in [0, 1, 2, 3, 4, 5, 6, 7, 8]" class="ridge">
+          <div class="inner-ridge"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="silkscreen-regular notes">
+        {{ state.notes }}
+      </div>
       <!--
-        volume
+        volume!
         octave slider? 3 notches from center for 7 total?
       -->
     </div>
@@ -149,29 +187,17 @@ window.addEventListener("keyup", (e) => {
             v-for="i in [0, 1, 2, 3]"
             :on="state.chord?.name === Chords[i].name"
             :chord="Chords[i]"
+            :key-binding="chordKeys[i]"
             @click.native="toggleChord(Chords[i])"
           />
         </div>
         <div class="mod-buttons">
           <ModCard
-            :on="state.mod1On"
-            :mod="state.mod1"
-            @click.native="toggleMod(0)"
-          />
-          <ModCard
-            :on="state.mod2On"
-            :mod="state.mod2"
-            @click.native="toggleMod(1)"
-          />
-          <ModCard
-            :on="state.mod3On"
-            :mod="state.mod3"
-            @click.native="toggleMod(2)"
-          />
-          <ModCard
-            :on="state.mod4On"
-            :mod="state.mod4"
-            @click.native="toggleMod(3)"
+            v-for="(m, i) in mods"
+            :on="m.on"
+            :mod="m.mod"
+            :key-binding="modKeys[i]"
+            @click.native="toggleMod(i)"
           />
         </div>
       </div>
@@ -188,7 +214,8 @@ window.addEventListener("keyup", (e) => {
 
 <style scoped>
 .tulip {
-  min-width: 900px;
+  min-width: 1000px;
+  filter: drop-shadow(30px 30px 40px black);
 }
 .buttons {
   display: flex;
@@ -196,6 +223,7 @@ window.addEventListener("keyup", (e) => {
   gap: 4px;
   margin-left: 50px;
   margin-top: 25px;
+  margin-bottom: 25px;
 }
 .chord-buttons,
 .mod-buttons {
@@ -204,21 +232,78 @@ window.addEventListener("keyup", (e) => {
 }
 .keys {
   width: 100%;
-  margin-left: 40px;
+  margin-left: 140px;
 }
 .top-section {
-  min-width: 900px;
+  min-width: 1000px;
+  max-width: 1000px;
+  min-height: 100px;
+  max-height: 100px;
+  border: 1px solid white;
+  border-bottom: 0;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  display: inline-flex;
+  align-items: start;
+  justify-items: center;
+  gap: 200px;
+  padding-top: 8px;
+  background: rgb(150, 139, 105);
+}
+.ridges {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+.ridge {
+  min-width: 10px;
+  min-height: 48px;
+  max-height: 48px;
+  border: 1px solid white;
+  border-radius: 20px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.inner-ridge {
+  min-width: 3px;
+  max-width: 5px;
+  min-height: 40px;
+  max-height: 40px;
+  border: 1px solid black;
+  border-radius: 20px;
+  background: black;
+  margin-left: 1px;
+}
+.panel-section {
+  min-width: 1000px;
   min-height: 120px;
   border: 1px solid white;
   border-bottom: 0;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
+  position: relative;
+  top: -40px;
+  background: black;
+  display: flex;
+  align-items: center;
+}
+.notes {
+  font-size: 50px;
+  text-align: start;
+  margin-left: 20px;
 }
 .bottom-section {
   display: inline-flex;
-  min-width: 900px;
+  min-width: 1000px;
   border: 1px solid white;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
+  position: relative;
+  top: -40px;
+  background: rgb(31, 31, 31);
 }
 </style>
