@@ -62,7 +62,6 @@ export class SynthEngine {
     if (this.mod3On) this.notes.push(this.mod3.getNote(this.root!));
     if (this.mod4On) this.notes.push(this.mod4.getNote(this.root!));
 
-    console.log(this.notes.map(NoteToString).join(" "));
     this.synth!.volume.value = this.getVolume();
     this.notes.forEach((n) => this.playNote(n));
   }
@@ -132,6 +131,6 @@ export class SynthEngine {
   }
 
   getNotes(): string {
-    return this.notes.map((n) => n.name).join(" ");
+    return this.notes.map(NoteToString).join(" ");
   }
 }

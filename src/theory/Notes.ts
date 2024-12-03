@@ -7,7 +7,7 @@ export interface Note {
 
 export function AddNote(note: Note, mod: number): Note {
   let val = note.value - 1 + mod;
-  const res = Notes[val % 12];
+  const res = JSON.parse(JSON.stringify(Notes[val % 12]));
   res.octave = note.octave;
   if (res.octave) {
     while (val < 0) {

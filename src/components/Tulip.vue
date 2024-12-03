@@ -3,26 +3,26 @@ import { computed, onBeforeUnmount, onMounted, reactive } from "vue";
 import { SynthEngine } from "../SynthEngine";
 import Chords, { Chord } from "../theory/Chords";
 import Mods, { Mod } from "../theory/Mods";
-import Notes, { AddNote, Note } from "../theory/Notes";
+import Notes, { AddNote, Equals, Note } from "../theory/Notes";
 import ChordCard from "./ChordCard.vue";
 import Keyboard from "./Keyboard.vue";
 import ModCard from "./ModCard.vue";
 
-const chordKeys = ["a", "s", "d", "f"];
-const modKeys = ["z", "x", "c", "v"];
+const chordKeys = ["q", "w", "e", "r"];
+const modKeys = ["a", "s", "d", "f"];
 const keyboardKeys = [
+  "v",
   "g",
-  "y",
+  "b",
   "h",
-  "u",
-  "j",
+  "n",
+  "m",
   "k",
-  "o",
+  ",",
   "l",
-  "p",
+  ".",
   ";",
-  "[",
-  "'",
+  "/",
 ];
 const synthEngine = new SynthEngine();
 
@@ -106,6 +106,11 @@ function toggleMod(num: number) {
     if (state.mod4On) removeMod(num);
     else addMod(num);
   }
+}
+
+function keyClicked(note: Note) {
+  if (Equals(state.root, note)) state.root = synthEngine.changeRootNote(null);
+  else state.root = synthEngine.changeRootNote(note);
 }
 
 function keydown(e: KeyboardEvent) {
@@ -202,6 +207,7 @@ const mods = computed(() => {
           :root="state.root"
           :octave="state.octave"
           :keyboard-keys="keyboardKeys"
+          @key-clicked="keyClicked"
         />
       </div>
     </div>
@@ -211,7 +217,7 @@ const mods = computed(() => {
 <style scoped>
 .tulip {
   min-width: 1000px;
-  filter: drop-shadow(30px 30px 40px black);
+  filter: drop-shadow(10px 10px 12px black);
 }
 .buttons {
   display: flex;
@@ -245,6 +251,9 @@ const mods = computed(() => {
   gap: 200px;
   padding-top: 8px;
   background: rgb(150, 139, 105);
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 30px 60px -2px inset,
+    rgba(0, 0, 0, 0.3) 0px 18px 36px -1px inset;
 }
 .ridges {
   width: 100%;
@@ -286,6 +295,9 @@ const mods = computed(() => {
   background: black;
   display: flex;
   align-items: center;
+  box-shadow:
+    rgba(50, 93, 61, 0.411) 0px 30px 60px -2px inset,
+    rgba(26, 18, 54, 0.507) 0px 18px 36px -1px inset;
 }
 .notes {
   font-size: 50px;

@@ -2,9 +2,14 @@
 import { Note } from "../theory/Notes";
 
 defineProps<{ note: Note; pressed: boolean; bindingKey: string }>();
+const emit = defineEmits<{ keyClicked: [note: Note] }>();
 </script>
 <template>
-  <div class="black-key" :class="[pressed ? 'black-key-pressed' : '']">
+  <div
+    @click.native="emit('keyClicked', note)"
+    class="black-key"
+    :class="[pressed ? 'black-key-pressed' : '']"
+  >
     <div class="key-binding unselectable">{{ bindingKey.toUpperCase() }}</div>
   </div>
 </template>
