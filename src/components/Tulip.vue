@@ -31,6 +31,7 @@ const state = reactive<{
   root: Note | null;
   chord: Chord | null;
   octave: number;
+  voice: number;
   mod1: Mod;
   mod2: Mod;
   mod3: Mod;
@@ -45,6 +46,7 @@ const state = reactive<{
   root: null,
   chord: null,
   octave: 3,
+  voice: 1,
   mod1: Mods[0],
   mod2: Mods[1],
   mod3: Mods[2],
@@ -56,7 +58,7 @@ const state = reactive<{
   notes: "",
 });
 
-const synthEngine = new SynthEngine(state.octave);
+const synthEngine = new SynthEngine(state.octave, state.voice);
 
 function getNoteForKey(key: string): Note {
   let baseNote = Notes[0];
@@ -116,6 +118,10 @@ function changeOctave(octave: number) {
   state.octave = synthEngine.changeOctave(octave);
   if (state.root) state.root.octave = state.octave;
   updateNotes();
+}
+
+function changeVoice(voice: number) {
+  state.voice = synthEngine.changeVoice(voice);
 }
 
 function keyClicked(note: Note) {
@@ -195,6 +201,7 @@ const mods = computed(() => {
       <div class="silkscreen-regular notes">
         {{ state.notes }}
       </div>
+      <div class="synth-name great-vibes-regular">tulip</div>
     </div>
     <div class="bottom-section">
       <div class="buttons">
@@ -218,6 +225,13 @@ const mods = computed(() => {
         </div>
       </div>
       <div class="settings">
+        <Setting
+          name="Voice"
+          :value="state.voice"
+          :min="1"
+          :max="3"
+          @value-changed="changeVoice"
+        />
         <Setting
           name="Octave"
           :value="state.octave"
@@ -329,6 +343,13 @@ const mods = computed(() => {
   text-align: start;
   margin-left: 20px;
 }
+.synth-name {
+  position: absolute;
+  right: 40px;
+  top: -14px;
+  font-size: 56px;
+  transform: rotateZ("30deg");
+}
 .bottom-section {
   display: inline-flex;
   min-width: 1000px;
@@ -340,7 +361,7 @@ const mods = computed(() => {
   background: rgb(31, 31, 31);
 }
 .settings {
-  margin-top: 62px;
+  margin-top: 74px;
   min-width: 106px;
 }
 </style>
