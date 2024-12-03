@@ -24,6 +24,7 @@ defineProps<{
 .mod-card {
   width: 80px;
   height: 106px;
+  cursor: pointer;
 }
 .mod-card-button {
   border: 1px solid white;

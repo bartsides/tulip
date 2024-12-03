@@ -24,6 +24,7 @@ defineProps<{
 .chord-card {
   width: 80px;
   height: 106px;
+  cursor: pointer;
 }
 .chord-card-button {
   border: 1px solid white;

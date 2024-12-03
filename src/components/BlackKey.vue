@@ -25,6 +25,7 @@ const emit = defineEmits<{ keyClicked: [note: Note] }>();
   align-items: end;
   justify-items: center;
   padding-bottom: 5px;
+  cursor: pointer;
 }
 .black-key-pressed {
   background: rgb(54, 54, 54);

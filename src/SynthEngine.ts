@@ -19,6 +19,10 @@ export class SynthEngine {
   octave = 3;
   startingVolume = -6;
 
+  constructor(octave: number) {
+    this.octave = octave;
+  }
+
   setupSynth() {
     this.synth = new Tone.PolySynth(Tone.MonoSynth, {
       volume: this.startingVolume,
@@ -126,8 +130,11 @@ export class SynthEngine {
     }
   }
 
-  changeOctave(value: number) {
+  changeOctave(value: number): number {
     this.octave = value;
+    if (this.root) this.root.octave = this.octave;
+    this.play();
+    return this.octave;
   }
 
   getNotes(): string {

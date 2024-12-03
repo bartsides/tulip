@@ -7,6 +7,7 @@ import Notes, { AddNote, Equals, Note } from "../theory/Notes";
 import ChordCard from "./ChordCard.vue";
 import Keyboard from "./Keyboard.vue";
 import ModCard from "./ModCard.vue";
+import Setting from "./Setting.vue";
 
 const chordKeys = ["q", "w", "e", "r"];
 const modKeys = ["a", "s", "d", "f"];
@@ -24,9 +25,9 @@ const keyboardKeys = [
   ";",
   "/",
 ];
-const synthEngine = new SynthEngine();
 
 const state = reactive<{
+  volume: number;
   root: Note | null;
   chord: Chord | null;
   octave: number;
@@ -40,6 +41,7 @@ const state = reactive<{
   mod4On: boolean;
   notes: string;
 }>({
+  volume: 6,
   root: null,
   chord: null,
   octave: 3,
@@ -53,6 +55,8 @@ const state = reactive<{
   mod4On: false,
   notes: "",
 });
+
+const synthEngine = new SynthEngine(state.octave);
 
 function getNoteForKey(key: string): Note {
   let baseNote = Notes[0];
@@ -108,9 +112,20 @@ function toggleMod(num: number) {
   }
 }
 
+function changeOctave(octave: number) {
+  state.octave = synthEngine.changeOctave(octave);
+  if (state.root) state.root.octave = state.octave;
+  updateNotes();
+}
+
 function keyClicked(note: Note) {
   if (Equals(state.root, note)) state.root = synthEngine.changeRootNote(null);
   else state.root = synthEngine.changeRootNote(note);
+  updateNotes();
+}
+
+function updateNotes() {
+  state.notes = synthEngine.getNotes();
 }
 
 function keydown(e: KeyboardEvent) {
@@ -123,7 +138,7 @@ function keydown(e: KeyboardEvent) {
   } else if (e.key === " ") {
     synthEngine.release();
   }
-  state.notes = synthEngine.getNotes();
+  updateNotes();
 }
 
 function keyup(e: KeyboardEvent) {
@@ -138,7 +153,7 @@ function keyup(e: KeyboardEvent) {
   } else if (modKeys.includes(e.key)) {
     removeMod(getModForKey(e.key));
   }
-  state.notes = synthEngine.getNotes();
+  updateNotes();
 }
 
 onMounted(() => {
@@ -202,6 +217,15 @@ const mods = computed(() => {
           />
         </div>
       </div>
+      <div class="settings">
+        <Setting
+          name="Octave"
+          :value="state.octave"
+          :min="1"
+          :max="6"
+          @value-changed="changeOctave"
+        />
+      </div>
       <div class="keys">
         <Keyboard
           :root="state.root"
@@ -226,6 +250,7 @@ const mods = computed(() => {
   margin-left: 50px;
   margin-top: 25px;
   margin-bottom: 25px;
+  margin-right: 35px;
 }
 .chord-buttons,
 .mod-buttons {
@@ -234,7 +259,7 @@ const mods = computed(() => {
 }
 .keys {
   width: 100%;
-  margin-left: 140px;
+  margin-left: 0px;
 }
 .top-section {
   min-width: 1000px;
@@ -313,5 +338,9 @@ const mods = computed(() => {
   position: relative;
   top: -40px;
   background: rgb(31, 31, 31);
+}
+.settings {
+  margin-top: 62px;
+  min-width: 106px;
 }
 </style>
